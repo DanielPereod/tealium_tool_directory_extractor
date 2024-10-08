@@ -3,7 +3,7 @@
   window.transformationCollection = window.gApp.inMemoryModels.transformationCollection.models;
   window.ruleCollection = window.gApp.inMemoryModels.ruleCollection.models;
   window.uniquePaths = new Set();
-
+/* 
   loadScript("https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.js", function () {
     console.log("Babel Polyfill loaded.");
     loadScript("https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js", async function () {
@@ -18,7 +18,7 @@
     script.src = src;
     script.onload = callback;
     document.head.appendChild(script);
-  }
+  } */
 
   function mergeCellsDown(worksheet, column, isFormula = false) {
     let previousValue = null;

@@ -1,14 +1,19 @@
 const fs = require('fs');
 const UglifyJS = require("uglify-js");
 
-const jsFilePath = './main.js';
+const mainJsFilePath = './main.js';
+const excelJsFilePath = 'exceljs.min.js';
 
-fs.readFile(jsFilePath, 'utf8', (err, data) => {
-    if (err) {
-        console.error('Error al leer el archivo JavaScript:', err);
-        return;
-    }
-    const compiledCode = UglifyJS.minify(data);
+Promise.all([
+    fs.promises.readFile(mainJsFilePath, 'utf8'),
+    fs.promises.readFile(excelJsFilePath, 'utf8')
+])
+.then(([mainJsData, excelJsData]) => {
+    // Combine the contents of both files
+    const combinedCode = excelJsData + '\n' + mainJsData;
+
+    // Minify the combined code
+    const compiledCode = UglifyJS.minify(combinedCode);
 
     const jsonContent = {
         id: "download_tealium_tree",
@@ -26,11 +31,11 @@ fs.readFile(jsFilePath, 'utf8', (err, data) => {
     };
 
     const outputFilePath = './tealium_extractor.json';
-    fs.writeFile(outputFilePath, JSON.stringify(jsonContent, null, 4), (err) => {
-        if (err) {
-            console.error('Error al escribir el archivo JSON:', err);
-            return;
-        }
-        console.log('Archivo JSON creado exitosamente.');
-    });
+    return fs.promises.writeFile(outputFilePath, JSON.stringify(jsonContent, null, 4));
+})
+.then(() => {
+    console.log('Archivo JSON creado exitosamente.');
+})
+.catch((err) => {
+    console.error('Error:', err);
 });
