@@ -31,7 +31,10 @@ Promise.all([
     };
 
     const outputFilePath = './tealium_extractor.json';
-    return fs.promises.writeFile(outputFilePath, JSON.stringify(jsonContent, null, 4));
+    const rawCodeFilePath = './tealium_extractor_raw.js';
+    fs.promises.writeFile(outputFilePath, JSON.stringify(jsonContent, null, 4));
+    return fs.promises.writeFile(rawCodeFilePath, combinedCode);
+
 })
 .then(() => {
     console.log('Archivo JSON creado exitosamente.');
