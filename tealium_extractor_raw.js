@@ -102,7 +102,9 @@ window.audiencesCollection = window.gApp.inMemoryModels.audienceCollection.model
       const quantifier = quantifierCollection.find((q) => q.attributes.fullyQualifiedId === quantifierId);
       if (quantifier && !path.includes(quantifierId)) {
         const quantifierName = quantifier.attributes.name;
-        const newPath = [...path, quantifierId, quantifierName];
+        const quantifierDescription = quantifier.attributes.description;
+
+        const newPath = [...path, quantifierId, quantifierName, quantifierDescription];
         uniquePaths.add(JSON.stringify(newPath));
 
         const quantifierTransformations = quantifier.attributes.transformationIds;
@@ -143,7 +145,6 @@ window.audiencesCollection = window.gApp.inMemoryModels.audienceCollection.model
     mergeCellsDown(audiencesWorksheet, "A");
     mergeCellsDown(audiencesWorksheet, "B");
     mergeCellsDown(audiencesWorksheet, "C", true);
-    mergeCellsDown(audiencesWorksheet, "D"); // Add merging for description column
 
     mergeCellsDown(attributesWorksheet, "A");
     mergeCellsDown(attributesWorksheet, "B");
@@ -152,6 +153,8 @@ window.audiencesCollection = window.gApp.inMemoryModels.audienceCollection.model
     mergeCellsDown(attributesWorksheet, "E");
     mergeCellsDown(attributesWorksheet, "F");
     mergeCellsDown(attributesWorksheet, "G");
+    mergeCellsDown(attributesWorksheet, "H");
+
 
     let buffer = await workbook.xlsx.writeBuffer();
 
@@ -198,7 +201,6 @@ window.audiencesCollection = window.gApp.inMemoryModels.audienceCollection.model
           pathArray[0], 
           pathArray[1], 
           { formula: linkFormula },
-          audience.attributes.description || '' // Add description column
         ]);
       }
       attributeSet.add(JSON.stringify(pathArray.slice(2)));
