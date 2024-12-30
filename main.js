@@ -1,24 +1,8 @@
-  window.audiencesCollection = window.gApp.inMemoryModels.audienceCollection.models;
+window.audiencesCollection = window.gApp.inMemoryModels.audienceCollection.models;
   window.quantifierCollection = window.gApp.inMemoryModels.quantifierCollection.models;
   window.transformationCollection = window.gApp.inMemoryModels.transformationCollection.models;
   window.ruleCollection = window.gApp.inMemoryModels.ruleCollection.models;
   window.uniquePaths = new Set();
-/* 
-  loadScript("https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.js", function () {
-    console.log("Babel Polyfill loaded.");
-    loadScript("https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js", async function () {
-      console.log("ExcelJS loaded.");
-      await getTealiumTree();
-      console.log("Downloading file.");
-    });
-  });
-
-  function loadScript(src, callback) {
-    var script = document.createElement("script");
-    script.src = src;
-    script.onload = callback;
-    document.head.appendChild(script);
-  } */
 
   function mergeCellsDown(worksheet, column, isFormula = false) {
     let previousValue = null;
@@ -112,12 +96,15 @@
     const audiencesWorksheet = workbook.addWorksheet("Audiences");
     const attributesWorksheet = workbook.addWorksheet("Attributes");
 
+    // Add headers
+    audiencesWorksheet.addRow(['ID', 'Name', 'Attribute', 'Description']);
     audiencesWorksheet.addRows(audiencesArray);
     attributesWorksheet.addRows(attributeArray);
 
     mergeCellsDown(audiencesWorksheet, "A");
     mergeCellsDown(audiencesWorksheet, "B");
     mergeCellsDown(audiencesWorksheet, "C", true);
+    mergeCellsDown(audiencesWorksheet, "D"); // Add merging for description column
 
     mergeCellsDown(attributesWorksheet, "A");
     mergeCellsDown(attributesWorksheet, "B");
@@ -168,7 +155,12 @@
       const prevString = prevPathArray ? JSON.stringify([prevPathArray[0], prevPathArray[1], prevPathArray[2]]) : 0;
 
       if (currentString != prevString) {
-        audiencesArray.push([pathArray[0], pathArray[1], { formula: linkFormula }]);
+        audiencesArray.push([
+          pathArray[0], 
+          pathArray[1], 
+          { formula: linkFormula },
+          audience.attributes.description || '' // Add description column
+        ]);
       }
       attributeSet.add(JSON.stringify(pathArray.slice(2)));
     }
